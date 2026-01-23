@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #000000;
+}
+
+p {
+  @apply text-black!;
+}
+
+.no-content {
+  @apply  text-gray-500 italic;
+}
