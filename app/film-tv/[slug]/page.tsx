@@ -9,6 +9,9 @@ import { getArticleBySlug, getRelatedPosts, getStrapiImageUrl } from "@/lib/stra
 import Image from "next/image";
 import BlockRendererClient from "@/components/BlockRendererClient";
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = 'force-dynamic';
+
 export default async function FilmTVListingPage({
   params,
 }: {

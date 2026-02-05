@@ -9,6 +9,9 @@ import {
 import { Category } from "@/lib/types";
 import FilmTVList from "@/components/FilmTVList";
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = 'force-dynamic';
+
 const CATEGORY: Category = "Film + TV" as Category;
 const PAGE_SIZE = 6;
 

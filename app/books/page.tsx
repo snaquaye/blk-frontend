@@ -8,6 +8,9 @@ import {
 } from "@/lib/strapi";
 import { Category } from "@/lib/types";
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = 'force-dynamic';
+
 const CATEGORY: Category = "Books" as Category;
 const PAGE_SIZE = 3;
 
