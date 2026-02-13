@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
         pathname: '/uploads/**',
       },
     ],
-    unoptimized: true, // Add this to suppress image warnings
   },
 };
+
+export default nextConfig;

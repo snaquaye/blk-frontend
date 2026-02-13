@@ -119,10 +119,20 @@ export async function getArticlesByCategoryPaginated(
     `/articles?filters[category][$eq]=${encodeURIComponent(category)}&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate=*`
   );
   
+  // Calculate pageCount based on the total items returned when API doesn't provide pagination metadata
+  const apiPagination = response.meta?.pagination;
+  const totalItems = apiPagination?.total ?? response.data.length;
+  const calculatedPageCount = Math.ceil(totalItems / pageSize) || 1;
+  
   return {
     data: response.data,
     meta: {
-      pagination: response.meta?.pagination || { page: 1, pageSize, pageCount: 1, total: response.data.length }
+      pagination: apiPagination || { 
+        page: 1, 
+        pageSize, 
+        pageCount: calculatedPageCount, 
+        total: totalItems 
+      }
     }
   };
 }

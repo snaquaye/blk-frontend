@@ -1,15 +1,23 @@
 import FeaturedGridCard from "@/components/FeaturedGridCard";
 import ExploreCard from "@/components/ExploreCard";
-import { getFeaturedArticles, getHomepage, getArticlesByCategory, getStrapiImageUrl } from "@/lib/strapi";
+import { getFeaturedArticlesPaginated, getHomepage, getArticlesByCategory, getStrapiImageUrl } from "@/lib/strapi";
 import NoContent from "@/components/NoContent";
 import { Category } from "@/lib/types";
+import PaginationControls from "@/components/PaginationControls";
 
-// Force dynamic rendering - don't pre-render at build time
+// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 
-export default async function Home() {
-  // Fetch featured articles (IsFeaturedPost = true, latest 4)
-  const featuredArticles = await getFeaturedArticles(4);
+interface HomePageProps {
+  searchParams: { page?: string };
+}
+
+export default async function Home({ searchParams }: HomePageProps) {
+  const currentPage = Number(searchParams.page) || 1;
+  const pageSize = 4;
+
+  // Fetch featured articles with pagination
+  const { data: featuredArticles, meta } = await getFeaturedArticlesPaginated(currentPage, pageSize);
   
   // Fetch homepage data
   const homepage = await getHomepage();
@@ -25,7 +33,7 @@ export default async function Home() {
     })
   );
 
-  // Helper function to extract image URL - coverImage is an object, not array
+  // Helper function to extract image URL
   const getImageUrl = (coverImage: any) => {
     if (!coverImage) return undefined;
     return getStrapiImageUrl(coverImage);
@@ -39,8 +47,17 @@ export default async function Home() {
   return (
     <main className="bg-white min-h-screen">
       {/* Blog Description */}
-      <div className="text-center py-6">
-        <p className="text-sm text-gray-500 italic">
+      <div style={{ textAlign: 'center', paddingTop: '24px', paddingBottom: '24px' }}>
+        <p style={{
+          fontFamily: 'Montserrat',
+          fontWeight: 300,
+          fontStyle: 'normal',
+          fontSize: '16px',
+          lineHeight: '100%',
+          letterSpacing: '0%',
+          textAlign: 'center',
+          color: '#6b7280'
+        }}>
           {homepage?.description || 'one sentence blog description'}
         </p>
       </div>
@@ -48,23 +65,34 @@ export default async function Home() {
       {/* Featured 2x2 Grid */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border border-gray-200">
         {featuredArticles.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {featuredArticles.map((article: any) => {
-                const coverImageUrl = getImageUrl(article.coverImage);
-                const altText = getAltText(article.coverImage);
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {featuredArticles.map((article: any) => {
+                  const coverImageUrl = getImageUrl(article.coverImage);
+                  const altText = getAltText(article.coverImage);
 
-                return (
-                  <FeaturedGridCard
-                    key={article.id}
-                    category={article.category}
-                    title={article.articleTitle}
-                    slug={article.slug}
-                    imageUrl={coverImageUrl}
-                    overlayText={altText || article.articleTitle}
-                  />
-                );
-              })}
-            </div>
+                  return (
+                    <FeaturedGridCard
+                      key={article.id}
+                      category={article.category}
+                      title={article.articleTitle}
+                      slug={article.slug}
+                      imageUrl={coverImageUrl}
+                      overlayText={altText || article.articleTitle}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* Pagination */}
+              {meta.pagination.pageCount > 1 && (
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={meta.pagination.pageCount}
+                  basePath="/"
+                />
+              )}
+            </>
           ) : (
             <NoContent message="No featured articles available." />
           )}

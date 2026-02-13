@@ -1,60 +1,21 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import FeaturedArticleCard from "@/components/FeaturedArticleCard";
-import RecentArticleCard from "@/components/RecentArticleCard";
 import PageTitle from "@/components/PageTitle";
-import { getArticlesByCategoryPaginated, getStrapiImageUrl } from "@/lib/strapi";
-import { Article } from "@/lib/types";
+import CultureList from "@/components/CultureList";
+import { getArticlesByCategoryPaginated } from "@/lib/strapi";
+import { Category } from "@/lib/types";
 
-const PaginationDots = ({ totalPages, currentPage, onPageChange }: {
-  totalPages: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
-}) => {
-  return (
-    <div className="flex justify-center items-center gap-2 py-6">
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <button
-          key={page}
-          onClick={() => onPageChange(page)}
-          className={`w-6 h-6 flex items-center justify-center text-xs font-medium transition-colors
-            ${currentPage === page
-              ? 'bg-black text-white'
-              : 'bg-white text-black border border-black hover:bg-gray-100'
-            }`}
-        >
-          {page}
-        </button>
-      ))}
-    </div>
-  );
-};
+export const dynamic = 'force-dynamic';
 
-export default function CulturePage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+interface CulturePageProps {
+  searchParams: { page?: string };
+}
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const result = await getArticlesByCategoryPaginated('Culture', currentPage, 6);
-        setArticles(result.data);
-        setTotalPages(result.meta.pagination.pageCount);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      }
-    };
+export default async function CulturePage({ searchParams }: CulturePageProps) {
+  const currentPage = Number(searchParams.page) || 1;
+  const pageSize = 6;
+  const category: Category = "Culture";
 
-    fetchArticles();
-  }, [currentPage]);
-
-  // Helper function to extract image URL - coverImage is an object, not array
-  const getImageUrl = (coverImage: any) => {
-    if (!coverImage) return undefined;
-    return getStrapiImageUrl(coverImage);
-  };
+  const { data: articles, meta } = await getArticlesByCategoryPaginated(category, currentPage, pageSize);
 
   const featuredArticles = [
     {
@@ -99,32 +60,20 @@ export default function CulturePage() {
         </div>
       </div>
 
-      {/* Recent Articles Section */}
+      {/* Recent Articles Section with Load More */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h2 className="text-sm font-bold uppercase tracking-wider italic mb-6">
           RECENT ARTICLES
         </h2>
         <div className="border border-gray-200 p-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {articles.map((article, i) => (
-              <RecentArticleCard
-                key={article.id}
-                title={article.articleTitle}
-                imageUrl={getImageUrl(article.coverImage)}
-                slug={`/culture/${article.slug}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Pagination Dots */}
-        {totalPages > 1 && (
-          <PaginationDots
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
+          <CultureList
+            articles={articles}
+            category={category}
+            initialPage={currentPage}
+            pageSize={pageSize}
+            totalPages={meta.pagination.pageCount}
           />
-        )}
+        </div>
       </div>
     </main>
   );
