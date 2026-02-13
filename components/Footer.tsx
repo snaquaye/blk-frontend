@@ -23,6 +23,7 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-white!">Categories</h3>
             <ul className="space-y-3">
+              <li><Link href="/about" className="text-sm text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/books" className="text-sm text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">Books</Link></li>
               <li><Link href="/culture" className="text-sm text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">Culture</Link></li>
               <li><Link href="/film-tv" className="text-sm text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">Film & TV</Link></li>

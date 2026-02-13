@@ -102,8 +102,8 @@ export default async function BookListingPage({params}: { params: Promise<{ slug
                 title={similarArticle.articleTitle}
                 slug={`/books/${similarArticle.slug}`}
                 imageUrl={
-                  similarArticle.coverImage?.[0]?.ImageSrc?.[0]
-                    ? getStrapiImageUrl(similarArticle.coverImage[0].ImageSrc[0])
+                  similarArticle.coverImage?.[0]?.url
+                    ? getStrapiImageUrl(similarArticle.coverImage[0])
                     : undefined
                 }
               />

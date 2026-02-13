@@ -1,11 +1,18 @@
 "use client";
+import React from "react";
 import Image from "next/image";
 
 import {
   BlocksRenderer,
   type BlocksContent,
 } from "@strapi/blocks-react-renderer";
-import { JSX } from "react/jsx-dev-runtime";
+import { getStrapiImageUrl } from "@/lib/strapi";
+
+interface BlockProps {
+  children?: React.ReactNode;
+  level?: number;
+  image?: any;
+}
 
 export default function BlockRendererClient({
   content,
@@ -17,19 +24,23 @@ export default function BlockRendererClient({
     <BlocksRenderer
       content={content}
       blocks={{
-        paragraph: ({ children }) => <p className="py-4">{children}</p>,
-        heading: ({ children, level }) => {
-          const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-          return <Tag className="py-4 font-extrabold text-[18px]">{children}</Tag>;
+        paragraph: (props: BlockProps) => <p className="py-4">{props.children}</p>,
+        heading: (props: BlockProps) => {
+          const Tag = `h${props.level || 1}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+          return React.createElement(Tag, { className: "py-4 font-extrabold text-[18px]" }, props.children);
         },
-        image: ({ image }) => {
-          console.log(image);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        image: (props: any) => {
+          console.log(props.image);
+          const imageData = props.image?.data?.attributes || props.image;
+          const imageUrl = getStrapiImageUrl(imageData);
+          if (!imageUrl) return null;
           return (
             <Image
-              src={image.url}
-              width={image.width}
-              height={image.height}
-              alt={image.alternativeText || ""}
+              src={imageUrl}
+              width={imageData.width || 800}
+              height={imageData.height || 600}
+              alt={imageData.alternativeText || ""}
             />
           );
         },

@@ -68,8 +68,8 @@ export default function BooksList({
           title={article.articleTitle}
           excerpt={getExcerpt(article)}
           imageUrl={
-            article.coverImage?.[0]?.ImageSrc?.[0]
-              ? getStrapiImageUrl(article.coverImage[0].ImageSrc[0])
+            article.coverImage?.[0]?.url
+              ? getStrapiImageUrl(article.coverImage[0])
               : undefined
           }
           slug={`/books/${article.slug}`}

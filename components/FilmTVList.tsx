@@ -54,11 +54,12 @@ export default function FilmTVList({
     <div className="flex-1">
       {/* Page Title */}
       <div className="mb-8">
-        <div className="flex items-center">
+        <div className="flex items-center justify-center">
+          <div className="hidden md:block h-1 bg-black mr-4 flex-1"></div>
           <h1 className="text-5xl md:text-6xl font-black tracking-tight text-black">
             BLK FILM+TV
           </h1>
-          <div className="hidden md:block flex-1 h-1 bg-black ml-4"></div>
+          <div className="hidden md:block h-1 bg-black ml-4 flex-1"></div>
         </div>
       </div>
 
@@ -68,8 +69,8 @@ export default function FilmTVList({
           <MainArticleCard
             key={article.slug || i}
             imageUrl={
-              article.coverImage?.[0]?.ImageSrc?.[0]
-                ? getStrapiImageUrl(article.coverImage[0].ImageSrc[0])
+              article.coverImage?.[0]?.url
+                ? getStrapiImageUrl(article.coverImage[0])
                 : undefined
             }
             title={article.articleTitle}

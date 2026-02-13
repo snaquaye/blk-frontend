@@ -13,8 +13,8 @@ export default function BookReviewContent({ article }: BookReviewContentProps) {
     return <p className="text-center text-gray-500">No review content available.</p>;
   }
 
-  const coverImage = article.coverImage?.[0]?.ImageSrc?.[0]
-    ? getStrapiImageUrl(article.coverImage[0].ImageSrc[0])
+  const coverImage = article.coverImage?.[0]?.url
+    ? getStrapiImageUrl(article.coverImage[0])
     : undefined;
 
   return (

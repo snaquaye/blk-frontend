@@ -1,6 +1,5 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'standalone',
+const nextConfig: NextConfig = {
+  reactStrictMode: false,
   images: {
     remotePatterns: [
       {
@@ -9,13 +8,7 @@ const nextConfig = {
         port: '1337',
         pathname: '/uploads/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'admin.everythingblk.com',
-        pathname: '/uploads/**',
-      },
     ],
+    unoptimized: true, // Add this to suppress image warnings
   },
 };
-
-module.exports = nextConfig;

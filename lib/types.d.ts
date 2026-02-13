@@ -134,11 +134,14 @@ export enum Content {
 export interface Genre {
     id: number;
 }
-
 export interface CoverImage {
-    id:            number;
-    AlternateText: Content;
-    ImageSrc:      ImageSrc[];
+    id: number;
+    url: string;
+    alternativeText?: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+    formats?: any;
 }
 
 export interface ImageSrc {
@@ -330,11 +333,6 @@ export interface Genre {
     id: number;
 }
 
-export interface CoverImage {
-    id:            number;
-    AlternateText: Description;
-    ImageSrc:      ImageSrc[];
-}
 
 export interface ImageSrc {
     id:                number;

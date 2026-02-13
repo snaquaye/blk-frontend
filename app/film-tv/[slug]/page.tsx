@@ -34,10 +34,10 @@ export default async function FilmTVListingPage({
       {/* Hero Section with Thumbnail */}
       <div className="bg-black text-white relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-24">
-          {getStrapiImageUrl(article.coverImage?.[0]?.ImageSrc?.[0]) ? (
+          {getStrapiImageUrl(article.coverImage?.[0]) ? (
             <Image
               alt={article.articleTitle}
-              src={getStrapiImageUrl(article.coverImage?.[0]?.ImageSrc?.[0])!}
+              src={getStrapiImageUrl(article.coverImage?.[0])!}
               width={0}
               height={0}
               sizes="100vw"
@@ -110,8 +110,8 @@ export default async function FilmTVListingPage({
           {/* Review Hero Card */}
           <div className="py-8">
             <FilmTVReviewHero
-              imageUrl={getStrapiImageUrl(article.coverImage?.[0]?.ImageSrc?.[0])}
-              imageAlt={article.coverImage?.[0]?.AlternateText || article.review.title}
+              imageUrl={getStrapiImageUrl(article.coverImage?.[0])}
+              imageAlt={article.coverImage?.[0]?.alternativeText || article.review.title}
               rating={article.review.rating}
               genre={article.review.genre}
               reviewType={article.review.reviewType}
@@ -179,7 +179,7 @@ export default async function FilmTVListingPage({
       {/* Author Bio */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <AuthorBio
-          imageUrl={article.author.profilePicture?.url}
+          imageUrl={getStrapiImageUrl(article.author.profilePicture)}
           name={article.author.name}
           bio={article.author.bio}
         />
@@ -196,8 +196,8 @@ export default async function FilmTVListingPage({
               key={i}
               title={article.articleTitle}
               slug={article.slug}
-              imageUrl={article.coverImage?.[0]?.ImageSrc?.[0]?.url || ""}
-            />
+              imageUrl={article.coverImage?.[0]?.url || ""}
+            /> 
           ))}
         </div>
       </div>
