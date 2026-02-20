@@ -1,7 +1,7 @@
 import { strapi } from "@strapi/client";
 import { Article, Category, Homepage, StapiImage } from "./types";
-const client = strapi({baseURL: process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'});
 
+const client = strapi({baseURL: process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'});
 const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
 
 interface StrapiResponse<T> {
@@ -119,7 +119,6 @@ export async function getArticlesByCategoryPaginated(
     `/articles?filters[category][$eq]=${encodeURIComponent(category)}&sort=createdAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}&populate=*`
   );
   
-  // Calculate pageCount based on the total items returned when API doesn't provide pagination metadata
   const apiPagination = response.meta?.pagination;
   const totalItems = apiPagination?.total ?? response.data.length;
   const calculatedPageCount = Math.ceil(totalItems / pageSize) || 1;
@@ -148,10 +147,13 @@ export async function getCategoriesWithArticles(limit: number = 3): Promise<Cate
   return response.data;
 }
 
+/**
+ * Get article by slug
+ */
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   const response = await fetchAPI<StrapiResponse<Array<Article>>>(
     `/articles?filters[slug][$eq]=${slug}&populate=*`
-  )
+  );
 
   const article = response.data[0] || null;
 
@@ -164,7 +166,6 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 export function getStrapiImageUrl(image?: any): string | undefined {
   if (!image) return undefined;
 
-  // Handle direct object with url property
   let urlString: string | undefined;
   
   if (typeof image === 'string') {
@@ -177,24 +178,18 @@ export function getStrapiImageUrl(image?: any): string | undefined {
 
   if (!urlString) return undefined;
 
-  // If the URL is already absolute, return it
   if (urlString.startsWith('http')) {
     return urlString;
   }
 
-  // Otherwise, prepend the Strapi URL
   return `${STRAPI_URL}${urlString}`;
 }
 
 /**
  * Get articles by tags (where article has one or more of the specified tags)
- * Uses $in operator to match any of the provided tag slugs
  */
 export async function getArticlesByTags(tagSlugs: string[], limit: number = 3, excludeSlug?: string): Promise<Article[]> {
-  // Build filter for tags - uses $in to match any of the tags
   const tagFilter = tagSlugs.map((slug, i) => `filters[tags][slug][$in][${i}]=${encodeURIComponent(slug)}`).join('&');
-
-  // Optionally exclude a specific article (useful for related posts)
   const excludeFilter = excludeSlug ? `&filters[slug][$ne]=${excludeSlug}` : '';
 
   const response = await fetchAPI<StrapiResponse<Array<Article>>>(
@@ -223,22 +218,32 @@ export async function getWatchlistItems(): Promise<Article[]> {
 }
 
 /**
- * Get currently reading books (placeholder/mock data)
- * TODO: Replace with actual Strapi fetch when the field is available
+ * Get currently reading books from Strapi
  */
-export async function getCurrentlyReadingBooks(): Promise<{ title: string; author: string; imageUrl?: string; slug: string }[]> {
-  // Placeholder data - replace with actual Strapi fetch when available
-  // Example Strapi query: `/articles?filters[currentlyReading][$eq]=true&populate=*`
-  return [
-    {
-      title: "DREAM COUNT",
-      author: "Chimamanda Ngozi Adichie",
-      slug: "/books/dream-count",
-    },
-    {
-      title: "INTERMEZZO",
-      author: "Sally Rooney",
-      slug: "/books/intermezzo",
-    },
-  ];
+export async function getCurrentlyReadingBooks(): Promise<Array<{
+  id: number;
+  title: string;
+  author?: string;
+  coverUrl?: string;
+  slug: string;
+}>> {
+  try {
+    const response = await fetchAPI<StrapiResponse<Array<Article>>>(
+      `/articles?filters[category][$eq]=Books&filters[currentlyReading][$eq]=true&sort=updatedAt:desc&pagination[limit]=3&populate=*`
+    );
+
+    console.log(' Raw Strapi response:', response.data.length, 'books');
+    console.log(' First book:', response.data[0]);
+
+    return response.data.map((article: any) => ({
+      id: article.id,
+      title: article.articleTitle,
+      author: article.author?.name,
+      coverUrl: getStrapiImageUrl(article.coverImage),
+      slug: article.slug,
+    }));
+  } catch (error) {
+    console.error(' Error fetching currently reading books:', error);
+    return [];
+  }
 }

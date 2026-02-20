@@ -11,12 +11,16 @@ import { getArticleBySlug, getRelatedPosts, getStrapiImageUrl } from "@/lib/stra
 import { formatDate } from "@/lib/utils";
 
 // Mock data for currently reading
-const currentlyReadingBook = {
-  title: "The Vanishing Half",
-  author: "Brit Bennett",
-  imageUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=450&fit=crop",
-  slug: "/books/the-vanishing-half"
-};
+const currentlyReading = [
+  {
+    id: 1,
+    title: "sisterhood",
+    author: "Author Name",
+    coverUrl: "http://localhost:1337/uploads/6_4_6c6d0f10b4.png",
+    progress: 65,
+    slug: "article-1",
+  },
+];
 
 // Force dynamic rendering - don't pre-render at build time
 export const dynamic = 'force-dynamic';

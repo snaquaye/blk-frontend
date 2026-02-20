@@ -1,55 +1,58 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-interface CurrentlyReadingProps {
+interface Book {
+  id: number;
   title: string;
-  author: string;
-  imageUrl?: string;
-  slug?: string;
+  author?: string;
+  coverUrl?: string;
+  slug: string;
 }
 
-export default function CurrentlyReading({ 
-  title, 
-  author,
-  imageUrl, 
-  slug = "#"
-}: CurrentlyReadingProps) {
+interface CurrentlyReadingProps {
+  books: Book[];
+}
+
+export default function CurrentlyReading({ books }: CurrentlyReadingProps) {
+  if (books.length === 0) return null;
+
   return (
-    <div className="text-right">
-      <h3 className="text-sm font-bold uppercase tracking-wider mb-4">
+    <div className="bg-white border border-gray-200 p-6">
+      <h2 className="text-xs font-bold uppercase tracking-wider mb-6">
         CURRENTLY READING..
-      </h3>
-      
-      <Link href={slug} className="block">
-        {/* Book Cover */}
-        <div className="inline-block w-32 aspect-[2/3] overflow-hidden shadow-lg mb-3">
-          {imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img 
-              src={imageUrl} 
-              alt={title} 
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-b from-orange-200 to-orange-400 flex flex-col items-center justify-center p-2">
-              <div className="text-xs text-gray-700 mb-1">Chimamanda</div>
-              <div className="text-xs text-gray-700 mb-2">Ngozi Adichie</div>
-              <div className="text-center">
-                <span className="text-lg font-bold text-red-600 uppercase leading-tight block">DREAM</span>
-                <span className="text-lg font-bold text-red-600 uppercase leading-tight block">COUNT</span>
-              </div>
-              <div className="mt-2">
-                <span className="text-2xl">🔥</span>
-              </div>
+      </h2>
+      <div className="flex flex-col gap-6">
+        {books.map((book) => (
+          <Link
+            key={book.id}
+            href={`/books/${book.slug}`}
+            className="group text-center"
+          >
+            <div className="relative aspect-[2/3] w-full max-w-[120px] mx-auto overflow-hidden bg-gray-100 mb-3">
+              {book.coverUrl ? (
+                <img
+                  src={book.coverUrl}
+                  alt={book.title}
+                  className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                  <span className="text-xs text-gray-400">No Cover</span>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        
-        {/* Book Info */}
-        <div>
-          <h4 className="text-sm font-bold">{title}</h4>
-          <p className="text-xs text-gray-600 italic">By: {author}</p>
-        </div>
-      </Link>
+            
+            <h3 className="text-xs font-bold mb-1 group-hover:opacity-70 transition-opacity">
+              {book.title}
+            </h3>
+            
+            {book.author && (
+              <p className="text-xs text-gray-600">
+                by {book.author}
+              </p>
+            )}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
