@@ -17,21 +17,23 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
 
   const { data: articles, meta } = await getArticlesByCategoryPaginated(category, currentPage, pageSize);
 
-  const featuredArticles = [
-    {
-      title: "THE RISE OF ...",
-      excerpt: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum..."
-    },
-    {
-      title: "THE RISE OF ...",
-      excerpt: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum..."
-    },
-    {
-      title: "THE RISE OF ...",
-      excerpt: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum..."
-    },
-  ];
+  // const featuredArticles = [
+  //   {
+  //     title: "THE RISE OF ...",
+  //     excerpt: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum..."
+  //   },
+  //   {
+  //     title: "THE RISE OF ...",
+  //     excerpt: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum..."
+  //   },
+  //   {
+  //     title: "THE RISE OF ...",
+  //     excerpt: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum..."
+  //   },
+  // ];
 
+  // point to the database
+  // add currently reading by the side
   return (
     <main className="bg-white min-h-screen">
       <PageTitle title="BLK BOOKS" />
@@ -39,10 +41,10 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
       {/* Featured Articles */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border border-gray-200">
         <div className="space-y-6">
-          {featuredArticles.map((article, i) => (
+          {articles.map((article, i) => (
             <FeaturedArticleCard
               key={i}
-              title={article.title}
+              title={article.articleTitle}
               excerpt={article.excerpt}
             />
           ))}

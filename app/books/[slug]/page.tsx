@@ -6,8 +6,17 @@ import TitleSection from "@/components/TitleSection";
 import BookReviewContent from "@/components/BookReviewContent";
 import BookRecommendationContent from "@/components/BookRecommendationContent";
 import BookEssayContent from "@/components/BookEssayContent";
+import CurrentlyReading from "@/components/CurrentlyReading";
 import { getArticleBySlug, getRelatedPosts, getStrapiImageUrl } from "@/lib/strapi";
 import { formatDate } from "@/lib/utils";
+
+// Mock data for currently reading
+const currentlyReadingBook = {
+  title: "The Vanishing Half",
+  author: "Brit Bennett",
+  imageUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=450&fit=crop",
+  slug: "/books/the-vanishing-half"
+};
 
 // Force dynamic rendering - don't pre-render at build time
 export const dynamic = 'force-dynamic';

@@ -221,3 +221,24 @@ export async function getWatchlistItems(): Promise<Article[]> {
   
   return response.data;
 }
+
+/**
+ * Get currently reading books (placeholder/mock data)
+ * TODO: Replace with actual Strapi fetch when the field is available
+ */
+export async function getCurrentlyReadingBooks(): Promise<{ title: string; author: string; imageUrl?: string; slug: string }[]> {
+  // Placeholder data - replace with actual Strapi fetch when available
+  // Example Strapi query: `/articles?filters[currentlyReading][$eq]=true&populate=*`
+  return [
+    {
+      title: "DREAM COUNT",
+      author: "Chimamanda Ngozi Adichie",
+      slug: "/books/dream-count",
+    },
+    {
+      title: "INTERMEZZO",
+      author: "Sally Rooney",
+      slug: "/books/intermezzo",
+    },
+  ];
+}
