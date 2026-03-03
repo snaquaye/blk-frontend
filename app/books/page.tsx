@@ -7,11 +7,11 @@ import { getArticlesByCategoryPaginated, getStrapiImageUrl, getCurrentlyReadingB
 export const dynamic = 'force-dynamic';
 
 interface BooksPageProps {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function BooksPage({ searchParams }: BooksPageProps) {
-  const currentPage = Number(searchParams.page) || 1;
+  const currentPage = Number((await searchParams).page) || 1;
   const pageSize = 6;
 
   const { data: articles, meta } = await getArticlesByCategoryPaginated('Books', currentPage, pageSize);
