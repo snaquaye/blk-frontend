@@ -4,21 +4,23 @@ import CultureList from "@/components/CultureList";
 import { getArticlesByCategoryPaginated } from "@/lib/strapi";
 import { Category } from "@/lib/types";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface CulturePageProps {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function CulturePage({ searchParams }: CulturePageProps) {
-  const currentPage = Number(searchParams.page) || 1;
+  const resolvedSearchParams = await searchParams;
+  const currentPage = Number(resolvedSearchParams.page) || 1;
   const pageSize = 6;
   const category: Category = "Culture";
 
-  const { data: articles, meta } = await getArticlesByCategoryPaginated(category, currentPage, pageSize);
-
-  
-
+  const { data: articles, meta } = await getArticlesByCategoryPaginated(
+    category,
+    currentPage,
+    pageSize,
+  );
 
   return (
     <main className="bg-white min-h-screen">

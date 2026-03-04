@@ -1,6 +1,7 @@
 import WatchlistCard from "@/components/WatchlistCard";
 import RecentArticleCard from "@/components/RecentArticleCard";
 import FilmTVList from "@/components/FilmTVList";
+import PageTitle from "@/components/PageTitle";
 import {
   getArticlesByCategoryPaginated,
   getRecentArticles,
@@ -12,16 +13,17 @@ import { Category } from "@/lib/types";
 const CATEGORY: Category = "Film + TV" as Category;
 const PAGE_SIZE = 6;
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface FilmTVPageProps {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function FilmTVPage({ searchParams }: FilmTVPageProps) {
-  const currentPage = Number(searchParams.page) || 1;
+  const resolvedSearchParams = await searchParams;
+  const currentPage = Number(resolvedSearchParams.page) || 1;
 
-  // Fetch all data
+  // Ftch all data
   const [watchlist, { data: articles, meta }, recent] = await Promise.all([
     getWatchlistItems(),
     getArticlesByCategoryPaginated(CATEGORY, currentPage, PAGE_SIZE),
@@ -36,6 +38,8 @@ export default async function FilmTVPage({ searchParams }: FilmTVPageProps) {
 
   return (
     <main className="bg-white min-h-screen">
+      <PageTitle title="BLK FILM + TV" />
+
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border border-gray-200">
         <div className="flex flex-col lg:flex-row gap-8">

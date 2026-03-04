@@ -33,13 +33,13 @@ export default function FilmTVList({
     try {
       const nextPage = currentPage + 1;
       const response = await fetch(
-        `/api/articles?category=${encodeURIComponent(category)}&page=${nextPage}&pageSize=${pageSize}`
+        `/api/articles?category=${encodeURIComponent(category)}&page=${nextPage}&pageSize=${pageSize}`,
       );
-      
+
       if (!response.ok) throw new Error("Failed to fetch articles");
-      
+
       const data = await response.json();
-      
+
       setArticles((prev) => [...prev, ...data.data]);
       setCurrentPage(nextPage);
       setHasMore(nextPage < data.meta.pagination.pageCount);
@@ -52,17 +52,6 @@ export default function FilmTVList({
 
   return (
     <div className="flex-1">
-      {/* Page Title */}
-      <div className="mb-8">
-        <div className="flex items-center justify-center">
-          <div className="hidden md:block h-1 bg-black mr-4 flex-1"></div>
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-black">
-            BLK FILM+TV
-          </h1>
-          <div className="hidden md:block h-1 bg-black ml-4 flex-1"></div>
-        </div>
-      </div>
-
       {/* Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {articles.map((article, i) => (
@@ -80,9 +69,7 @@ export default function FilmTVList({
       </div>
 
       {/* Pagination */}
-      {hasMore && (
-        <LoadMoreButton onClick={loadMore} isLoading={isLoading} />
-      )}
+      {hasMore && <LoadMoreButton onClick={loadMore} isLoading={isLoading} />}
     </div>
   );
 }

@@ -21,12 +21,14 @@ interface StrapiResponse<T> {
  */
 async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${STRAPI_URL}/api${endpoint}`;
+  const apiToken = process.env.STRAPI_API_TOKEN;
 
   const res = await fetch(url, {
     cache: 'no-store',
     next: { revalidate: 0 },
     headers: {
       'Content-Type': 'application/json',
+      ...(apiToken && { 'Authorization': `Bearer ${apiToken}` }),
       ...options.headers,
     },
     ...options,

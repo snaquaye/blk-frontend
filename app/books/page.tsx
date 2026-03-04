@@ -2,25 +2,39 @@ import FeaturedArticleCard from "@/components/FeaturedArticleCard";
 import RecentArticleCard from "@/components/RecentArticleCard";
 import CurrentlyReading from "@/components/CurrentlyReading";
 import PaginationControls from "@/components/PaginationControls";
-import { getArticlesByCategoryPaginated, getStrapiImageUrl, getCurrentlyReadingBooks } from "@/lib/strapi";
+import PageTitle from "@/components/PageTitle";
+import {
+  getArticlesByCategoryPaginated,
+  getStrapiImageUrl,
+  getCurrentlyReadingBooks,
+} from "@/lib/strapi";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface BooksPageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
 export default async function BooksPage({ searchParams }: BooksPageProps) {
-  const currentPage = Number((await searchParams).page) || 1;
+  const resolvedSearchParams = await searchParams;
+  const currentPage = Number(resolvedSearchParams.page) || 1;
   const pageSize = 6;
 
-  const { data: articles, meta } = await getArticlesByCategoryPaginated('Books', currentPage, pageSize);
-  
+  const { data: articles, meta } = await getArticlesByCategoryPaginated(
+    "Books",
+    currentPage,
+    pageSize,
+  );
+
   // Fetch currently reading books from Strapi
   const currentlyReading = await getCurrentlyReadingBooks();
-  
+
   // Debug log
-  console.log(' Currently Reading Books:', currentlyReading.length, 'books found');
+  console.log(
+    " Currently Reading Books:",
+    currentlyReading.length,
+    "books found",
+  );
 
   // Helper function to extract image URL
   const getImageUrl = (coverImage: any) => {
@@ -33,16 +47,7 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
 
   return (
     <main className="bg-white min-h-screen">
-      {/* Page Title */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
-        <div className="flex items-center justify-center">
-          <div className="h-px bg-black flex-1 max-w-[200px]"></div>
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-black px-8">
-            BLK BOOKS
-          </h1>
-          <div className="h-px bg-black flex-1 max-w-[200px]"></div>
-        </div>
-      </div>
+      <PageTitle title="BLK BOOKS" />
 
       {/* Main Content with Sidebar */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
@@ -56,7 +61,7 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
                   <FeaturedArticleCard
                     key={article.id}
                     title={article.articleTitle}
-                    excerpt={article.excerpt }
+                    excerpt={article.excerpt}
                   />
                 ))}
               </div>
