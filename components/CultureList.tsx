@@ -2,7 +2,7 @@
 
 import { Article, Category } from "@/lib/types";
 import RecentArticleCard from "./RecentArticleCard";
-import { getStrapiImageUrl } from "@/lib/strapi";
+import { getArticleImageUrl } from "@/lib/strapi";
 import LoadMoreButton from "./LoadMoreButton";
 import { useState, useCallback } from "react";
 
@@ -33,13 +33,13 @@ export default function CultureList({
     try {
       const nextPage = currentPage + 1;
       const response = await fetch(
-        `/api/articles?category=${encodeURIComponent(category)}&page=${nextPage}&pageSize=${pageSize}`
+        `/api/articles?category=${encodeURIComponent(category)}&page=${nextPage}&pageSize=${pageSize}`,
       );
-      
+
       if (!response.ok) throw new Error("Failed to fetch articles");
-      
+
       const data = await response.json();
-      
+
       setArticles((prev) => [...prev, ...data.data]);
       setCurrentPage(nextPage);
       setHasMore(nextPage < data.meta.pagination.pageCount);
@@ -56,7 +56,7 @@ export default function CultureList({
         <RecentArticleCard
           key={article.slug || i}
           title={article.articleTitle}
-          imageUrl={getStrapiImageUrl(article.coverImage)}
+          imageUrl={getArticleImageUrl(article)}
           slug={`/culture/${article.slug}`}
         />
       ))}

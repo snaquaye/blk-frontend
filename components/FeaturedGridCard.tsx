@@ -21,27 +21,33 @@ export default function FeaturedGridCard({
   return (
     <div className="relative mb-8">
       {/* Image Section with Overlay */}
-      <Link href={renderLink(slug, category)} className="block aspect-square bg-gray-300 relative group overflow-hidden border border-gray-200">
+      <Link
+        href={renderLink(slug, category)}
+        className="block aspect-square bg-gray-300 relative group overflow-hidden border border-gray-200"
+      >
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-300">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
           </div>
         )}
-        
+
         {/* Overlay Text */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-white text-center">
             <span className="font-serif italic text-3xl md:text-4xl drop-shadow-lg">
               {displayOverlay}
             </span>
-            <span className="text-red-500 ml-2 text-xl">{'>'}{'>'}{'>'}</span>
+            <span className="text-red-500 ml-2 text-xl">
+              {">>"}
+              {">"}
+            </span>
           </div>
         </div>
       </Link>

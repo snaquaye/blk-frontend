@@ -5,12 +5,16 @@ import SocialIcons from "@/components/SocialIcons";
 import RecentArticleCard from "@/components/RecentArticleCard";
 import TitleSection from "@/components/TitleSection";
 import FilmTVReviewHero from "@/components/FilmTVReviewHero";
-import { getArticleBySlug, getRelatedPosts, getStrapiImageUrl } from "@/lib/strapi";
+import {
+  getArticleBySlug,
+  getRelatedPosts,
+  getArticleImageUrl,
+} from "@/lib/strapi";
 import Image from "next/image";
 import BlockRendererClient from "@/components/BlockRendererClient";
 
 // Force dynamic rendering - don't pre-render at build time
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function FilmTVListingPage({
   params,
@@ -34,10 +38,10 @@ export default async function FilmTVListingPage({
       {/* Hero Section with Thumbnail */}
       <div className="bg-black text-white relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-24">
-          {getStrapiImageUrl(article.coverImage?.[0]) ? (
+          {getArticleImageUrl(article) ? (
             <Image
               alt={article.articleTitle}
-              src={getStrapiImageUrl(article.coverImage?.[0])!}
+              src={getArticleImageUrl(article)!}
               width={0}
               height={0}
               sizes="100vw"
@@ -96,7 +100,11 @@ export default async function FilmTVListingPage({
               number={index + 1}
               title={show.title}
               content={show.content}
-              imageUrl={getStrapiImageUrl(show.image)}
+              imageUrl={
+                show.image
+                  ? getArticleImageUrl({ coverImage: show.image })
+                  : undefined
+              }
               trailerLink={show.trailerLink}
               genre={show.genre}
               rating={show.rating}
@@ -111,8 +119,13 @@ export default async function FilmTVListingPage({
           {/* Review Hero Card */}
           <div className="py-8">
             <FilmTVReviewHero
-              imageUrl={getStrapiImageUrl(article.coverImage?.[0])}
-              imageAlt={article.coverImage?.[0]?.alternativeText || article.review.title}
+              imageUrl={getArticleImageUrl(article)}
+              imageAlt={
+                (Array.isArray(article.coverImage)
+                  ? article.coverImage[0]?.alternativeText
+                  : (article.coverImage as any)?.alternativeText) ||
+                article.review.title
+              }
               rating={article.review.rating}
               genre={article.review.genre}
               reviewType={article.review.reviewType}
@@ -123,41 +136,56 @@ export default async function FilmTVListingPage({
           {/* Blurb */}
           {article.review.blurb && (
             <div className="py-6 border-gray-200">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Blurb</h3>
-              <p className="text-lg text-gray-700 italic">{article.review.blurb}</p>
+              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">
+                Blurb
+              </h3>
+              <p className="text-lg text-gray-700 italic">
+                {article.review.blurb}
+              </p>
             </div>
           )}
 
           {/* Literary Tropes */}
-          {article.review.literaryTropes && article.review.literaryTropes.length > 0 && (
-            <div className="py-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Literary Tropes</h3>
-              <div className="flex flex-wrap gap-2">
-                {article.review.literaryTropes.map((trope, i) => (
-                  <span
-                    key={i}
-                    className="bg-gray-100 px-3 py-1 text-sm text-gray-700"
-                  >
-                    {trope.title}
-                  </span>
-                ))}
+          {article.review.literaryTropes &&
+            article.review.literaryTropes.length > 0 && (
+              <div className="py-6">
+                <h3 className="text-sm font-bold uppercase tracking-wider mb-4">
+                  Literary Tropes
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {article.review.literaryTropes.map((trope, i) => (
+                    <span
+                      key={i}
+                      className="bg-gray-100 px-3 py-1 text-sm text-gray-700"
+                    >
+                      {trope.title}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Initial Reaction */}
           {article.review.initialReaction && (
             <div className="py-8">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Initial Reaction</h3>
-              <p className="text-gray-700 leading-relaxed">{article.review.initialReaction}</p>
+              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">
+                Initial Reaction
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                {article.review.initialReaction}
+              </p>
             </div>
           )}
 
           {/* Final Review */}
           {article.review.finalReview && (
             <div className="py-8">
-              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">Final Thoughts</h3>
-              <p className="text-gray-700 leading-relaxed">{article.review.finalReview}</p>
+              <h3 className="text-sm font-bold uppercase tracking-wider mb-4">
+                Final Thoughts
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                {article.review.finalReview}
+              </p>
             </div>
           )}
         </div>
@@ -180,7 +208,13 @@ export default async function FilmTVListingPage({
       {/* Author Bio */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <AuthorBio
-          imageUrl={getStrapiImageUrl(article.author.profilePicture)}
+          imageUrl={
+            article.author.profilePicture
+              ? getArticleImageUrl({
+                  coverImage: article.author.profilePicture,
+                })
+              : undefined
+          }
           name={article.author.name}
           bio={article.author.bio}
         />
@@ -196,9 +230,9 @@ export default async function FilmTVListingPage({
             <RecentArticleCard
               key={i}
               title={article.articleTitle}
-              slug={article.slug}
-              imageUrl={article.coverImage?.[0]?.url || ""}
-            /> 
+              slug={`/film-tv/${article.slug}`}
+              imageUrl={getArticleImageUrl(article)}
+            />
           ))}
         </div>
       </div>

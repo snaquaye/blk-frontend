@@ -2,7 +2,7 @@
 
 import { Article, Category } from "@/lib/types";
 import FeaturedArticleCard from "./FeaturedArticleCard";
-import { getStrapiImageUrl } from "@/lib/strapi";
+import { getArticleImageUrl } from "@/lib/strapi";
 import LoadMoreButton from "./LoadMoreButton";
 import { useState, useCallback } from "react";
 
@@ -35,11 +35,11 @@ export default function BooksList({
       const response = await fetch(
         `/api/articles?category=${encodeURIComponent(category)}&page=${nextPage}&pageSize=${pageSize}`
       );
-      
+
       if (!response.ok) throw new Error("Failed to fetch articles");
-      
+
       const data = await response.json();
-      
+
       setArticles((prev) => [...prev, ...data.data]);
       setCurrentPage(nextPage);
       setHasMore(nextPage < data.meta.pagination.pageCount);
@@ -67,19 +67,13 @@ export default function BooksList({
           key={article.slug || i}
           title={article.articleTitle}
           excerpt={getExcerpt(article)}
-          imageUrl={
-            article.coverImage?.[0]?.url
-              ? getStrapiImageUrl(article.coverImage[0])
-              : undefined
-          }
+          imageUrl={getArticleImageUrl(article)}
           slug={`/books/${article.slug}`}
         />
       ))}
 
       {/* Pagination */}
-      {hasMore && (
-        <LoadMoreButton onClick={loadMore} isLoading={isLoading} />
-      )}
+      {hasMore && <LoadMoreButton onClick={loadMore} isLoading={isLoading} />}
     </div>
   );
 }

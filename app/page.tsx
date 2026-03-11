@@ -4,7 +4,7 @@ import {
   getFeaturedArticlesPaginated,
   getHomepage,
   getArticlesByCategory,
-  getStrapiImageUrl,
+  getArticleImageUrl,
 } from "@/lib/strapi";
 import NoContent from "@/components/NoContent";
 import { Category } from "@/lib/types";
@@ -42,15 +42,25 @@ export default async function Home({ searchParams }: HomePageProps) {
     }),
   );
 
-  // Helper function to extract image URL
-  const getImageUrl = (coverImage: any) => {
-    if (!coverImage) return undefined;
-    return getStrapiImageUrl(coverImage);
+  // Helper function to get image URL - checks both coverImage and coverImageUrl
+  const getImageUrl = (article: any) => {
+    return getArticleImageUrl(article);
   };
 
-  const getAltText = (coverImage: any) => {
-    if (!coverImage) return "";
-    return coverImage?.alternativeText || "";
+  const getAltText = (article: any) => {
+    if (!article) return "";
+    // Check coverImage first
+    if (article.coverImage) {
+      const coverImage = Array.isArray(article.coverImage)
+        ? article.coverImage[0]
+        : article.coverImage;
+      if (coverImage?.alternativeText) return coverImage.alternativeText;
+    }
+    // Check coverImageUrl
+    if (article.coverImageUrl) {
+      return article.articleTitle || "";
+    }
+    return "";
   };
 
   return (
@@ -85,8 +95,8 @@ export default async function Home({ searchParams }: HomePageProps) {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {featuredArticles.map((article: any) => {
-                const coverImageUrl = getImageUrl(article.coverImage);
-                const altText = getAltText(article.coverImage);
+                const coverImageUrl = getImageUrl(article);
+                const altText = getAltText(article);
 
                 return (
                   <FeaturedGridCard
@@ -129,7 +139,7 @@ export default async function Home({ searchParams }: HomePageProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {category.articles.length > 0 ? (
                 category.articles.map((article: any) => {
-                  const coverImageUrl = getImageUrl(article.coverImage);
+                  const coverImageUrl = getImageUrl(article);
 
                   return (
                     <ExploreCard

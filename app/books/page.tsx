@@ -5,7 +5,7 @@ import PaginationControls from "@/components/PaginationControls";
 import PageTitle from "@/components/PageTitle";
 import {
   getArticlesByCategoryPaginated,
-  getStrapiImageUrl,
+  getArticleImageUrl,
   getCurrentlyReadingBooks,
 } from "@/lib/strapi";
 
@@ -36,10 +36,9 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
     "books found",
   );
 
-  // Helper function to extract image URL
-  const getImageUrl = (coverImage: any) => {
-    if (!coverImage) return undefined;
-    return getStrapiImageUrl(coverImage);
+  // Helper function to get image URL - checks both coverImage and coverImageUrl
+  const getImageUrl = (article: any) => {
+    return getArticleImageUrl(article);
   };
 
   // Get first 3 articles as featured
@@ -62,6 +61,8 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
                     key={article.id}
                     title={article.articleTitle}
                     excerpt={article.excerpt}
+                    imageUrl={getImageUrl(article)}
+                    slug={`/books/${article.slug}`}
                   />
                 ))}
               </div>
@@ -89,7 +90,7 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
                     <RecentArticleCard
                       key={article.id}
                       title={article.articleTitle}
-                      imageUrl={getImageUrl(article.coverImage)}
+                      imageUrl={getImageUrl(article)}
                       slug={`/books/${article.slug}`}
                     />
                   ))}

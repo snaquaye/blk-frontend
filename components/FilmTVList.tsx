@@ -2,7 +2,7 @@
 
 import { Article, Category } from "@/lib/types";
 import MainArticleCard from "./MainArticleCard";
-import { getStrapiImageUrl } from "@/lib/strapi";
+import { getArticleImageUrl } from "@/lib/strapi";
 import LoadMoreButton from "./LoadMoreButton";
 import { useState, useCallback } from "react";
 
@@ -57,11 +57,7 @@ export default function FilmTVList({
         {articles.map((article, i) => (
           <MainArticleCard
             key={article.slug || i}
-            imageUrl={
-              article.coverImage?.[0]?.url
-                ? getStrapiImageUrl(article.coverImage[0])
-                : undefined
-            }
+            imageUrl={getArticleImageUrl(article)}
             title={article.articleTitle}
             slug={article.slug}
           />

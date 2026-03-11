@@ -5,7 +5,7 @@ import PageTitle from "@/components/PageTitle";
 import {
   getArticlesByCategoryPaginated,
   getRecentArticles,
-  getStrapiImageUrl,
+  getArticleImageUrl,
   getWatchlistItems,
 } from "@/lib/strapi";
 import { Category } from "@/lib/types";
@@ -30,10 +30,9 @@ export default async function FilmTVPage({ searchParams }: FilmTVPageProps) {
     getRecentArticles(3),
   ]);
 
-  // Helper function to extract image URL
-  const getImageUrl = (coverImage: any) => {
-    if (!coverImage) return undefined;
-    return getStrapiImageUrl(coverImage);
+  // Helper function to get image URL - checks both coverImage and coverImageUrl
+  const getImageUrl = (article: any) => {
+    return getArticleImageUrl(article);
   };
 
   return (
@@ -55,7 +54,7 @@ export default async function FilmTVPage({ searchParams }: FilmTVPageProps) {
                     key={i}
                     slug={article.slug}
                     title={article.articleTitle}
-                    imageUrl={getImageUrl(article.coverImage)}
+                    imageUrl={getImageUrl(article)}
                   />
                 ))}
               </div>
@@ -85,7 +84,7 @@ export default async function FilmTVPage({ searchParams }: FilmTVPageProps) {
                 key={article.slug || i}
                 title={article.articleTitle}
                 slug={`/film-tv/${article.slug}`}
-                imageUrl={getImageUrl(article.coverImage)}
+                imageUrl={getImageUrl(article)}
               />
             ))}
           </div>
