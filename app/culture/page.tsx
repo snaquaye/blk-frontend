@@ -1,24 +1,34 @@
 import FeaturedArticleCard from "@/components/FeaturedArticleCard";
 import PageTitle from "@/components/PageTitle";
 import CultureList from "@/components/CultureList";
-import { getArticlesByCategoryPaginated } from "@/lib/strapi";
+import {
+  getArticlesByCategoryPaginated,
+  getArticleImageUrl,
+} from "@/lib/strapi";
 import { Category } from "@/lib/types";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 interface CulturePageProps {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }
 
 export default async function CulturePage({ searchParams }: CulturePageProps) {
-  const currentPage = Number(searchParams.page) || 1;
+  const resolvedSearchParams = await searchParams;
+  const currentPage = Number(resolvedSearchParams.page) || 1;
   const pageSize = 6;
   const category: Category = "Culture";
 
-  const { data: articles, meta } = await getArticlesByCategoryPaginated(category, currentPage, pageSize);
+  const { data: articles, meta } = await getArticlesByCategoryPaginated(
+    category,
+    currentPage,
+    pageSize,
+  );
 
-  
-
+  // Helper function to get image URL - checks both coverImage and coverImageUrl
+  const getImageUrl = (article: any) => {
+    return getArticleImageUrl(article);
+  };
 
   return (
     <main className="bg-white min-h-screen">
@@ -32,6 +42,8 @@ export default async function CulturePage({ searchParams }: CulturePageProps) {
               key={i}
               title={article.articleTitle}
               excerpt={article.excerpt}
+              imageUrl={getImageUrl(article)}
+              slug={`/culture/${article.slug}`}
             />
           ))}
         </div>

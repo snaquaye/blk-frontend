@@ -7,7 +7,11 @@ import BookReviewContent from "@/components/BookReviewContent";
 import BookRecommendationContent from "@/components/BookRecommendationContent";
 import BookEssayContent from "@/components/BookEssayContent";
 import CurrentlyReading from "@/components/CurrentlyReading";
-import { getArticleBySlug, getRelatedPosts, getStrapiImageUrl } from "@/lib/strapi";
+import {
+  getArticleBySlug,
+  getRelatedPosts,
+  getArticleImageUrl,
+} from "@/lib/strapi";
 import { formatDate } from "@/lib/utils";
 
 // Mock data for currently reading
@@ -23,12 +27,16 @@ const currentlyReading = [
 ];
 
 // Force dynamic rendering - don't pre-render at build time
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export default async function BookListingPage({params}: { params: Promise<{ slug: string }> }) {
+export default async function BookListingPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
-  
+
   if (!article) {
     return (
       <main className="bg-white min-h-screen flex items-center justify-center">
@@ -38,10 +46,9 @@ export default async function BookListingPage({params}: { params: Promise<{ slug
   }
 
   // Get similar articles based on tags
-  const tagSlugs = article?.tags?.map(tag => tag.slug) || [];
-  const similarArticles = tagSlugs.length > 0 
-    ? await getRelatedPosts(slug, tagSlugs, 3)
-    : [];
+  const tagSlugs = article?.tags?.map((tag) => tag.slug) || [];
+  const similarArticles =
+    tagSlugs.length > 0 ? await getRelatedPosts(slug, tagSlugs, 3) : [];
 
   // Render content based on article type
   const renderContent = () => {
@@ -66,10 +73,14 @@ export default async function BookListingPage({params}: { params: Promise<{ slug
         </div>
 
         {/* Title Section - Overlaying with white background */}
-        <TitleSection 
+        <TitleSection
           title={article.articleTitle}
           description={article.excerpt}
-          author={article.author?.name || article.createdBy?.documentId?.toString() || "BLK"}
+          author={
+            article.author?.name ||
+            article.createdBy?.documentId?.toString() ||
+            "BLK"
+          }
           date={formatDate(article.publishedAt)}
         />
       </div>
@@ -83,9 +94,12 @@ export default async function BookListingPage({params}: { params: Promise<{ slug
       {/* Social Icons & Logo */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <SocialIcons className="mb-8" />
-        
+
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-black tracking-tight font-[family-name:var(--font-black-han-sans)]">
+          <Link
+            href="/"
+            className="text-3xl font-black tracking-tight font-[family-name:var(--font-black-han-sans)]"
+          >
             BLK
           </Link>
         </div>
@@ -97,7 +111,13 @@ export default async function BookListingPage({params}: { params: Promise<{ slug
           <AuthorBio
             name={article.author.name}
             bio={article.author.bio || ""}
-            imageUrl={article.author.profilePicture ? getStrapiImageUrl(article.author.profilePicture) : undefined}
+            imageUrl={
+              article.author.profilePicture
+                ? getArticleImageUrl({
+                    coverImage: article.author.profilePicture,
+                  })
+                : undefined
+            }
           />
         </div>
       )}
@@ -114,11 +134,7 @@ export default async function BookListingPage({params}: { params: Promise<{ slug
                 key={similarArticle.slug || i}
                 title={similarArticle.articleTitle}
                 slug={`/books/${similarArticle.slug}`}
-                imageUrl={
-                  similarArticle.coverImage?.[0]?.url
-                    ? getStrapiImageUrl(similarArticle.coverImage[0])
-                    : undefined
-                }
+                imageUrl={getArticleImageUrl(similarArticle)}
               />
             ))}
           </div>
@@ -127,7 +143,10 @@ export default async function BookListingPage({params}: { params: Promise<{ slug
 
       {/* Back Link */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-        <Link href="/books" className="text-sm text-gray-400 hover:text-black transition-colors">
+        <Link
+          href="/books"
+          className="text-sm text-gray-400 hover:text-black transition-colors"
+        >
           BACK
         </Link>
       </div>

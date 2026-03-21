@@ -23,13 +23,13 @@ export default function FeaturedArticleCard({
           <img 
             src={imageUrl} 
             alt={title} 
-            className="w-full h-full object-cover grayscale"
+            className="w-full h-full object-cover"
           />
         ) : (
           <div className="w-full h-full min-h-[180px] flex items-center justify-center bg-gray-800 text-white">
             <div className="text-center p-4">
               <span className="font-serif italic text-2xl">Sitcoms</span>
-              <span className="text-red-500 ml-2">&gt;&gt;&gt;</span>
+              <span className="text-red-500 ml-2">{'>'}{'>'}{'>'}</span>
             </div>
           </div>
         )}

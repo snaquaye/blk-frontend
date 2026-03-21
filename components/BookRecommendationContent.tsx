@@ -1,16 +1,20 @@
 import { Article } from "@/lib/types";
 import BookListingItem from "./BookListingItem";
-import { getStrapiImageUrl } from "@/lib/strapi";
+import { getArticleImageUrl } from "@/lib/strapi";
 
 interface BookRecommendationContentProps {
   article: Article;
 }
 
-export default function BookRecommendationContent({ article }: BookRecommendationContentProps) {
+export default function BookRecommendationContent({
+  article,
+}: BookRecommendationContentProps) {
   const recommendations = article.recommendationList;
 
   if (!recommendations || recommendations.length === 0) {
-    return <p className="text-center text-gray-500">No recommendations available.</p>;
+    return (
+      <p className="text-center text-gray-500">No recommendations available.</p>
+    );
   }
 
   return (
@@ -20,7 +24,8 @@ export default function BookRecommendationContent({ article }: BookRecommendatio
         <div className="flex gap-2">
           {article.tags?.map((tag, i) => (
             <span key={tag.id} className="text-sm text-gray-600">
-              {tag.name}{i < (article.tags?.length ?? 0) - 1 ? "," : ""}
+              {tag.name}
+              {i < (article.tags?.length ?? 0) - 1 ? "," : ""}
             </span>
           ))}
         </div>
@@ -28,8 +33,11 @@ export default function BookRecommendationContent({ article }: BookRecommendatio
 
       {/* Book Listings */}
       {recommendations.map((rec, index) => {
-        const imageUrl = rec.image ? getStrapiImageUrl(rec.image) : undefined;
-        
+        // Handle image from recommendation item - create a mock article-like object
+        const imageUrl = rec.image
+          ? getArticleImageUrl({ coverImage: rec.image } as any)
+          : undefined;
+
         return (
           <BookListingItem
             key={rec.id}
